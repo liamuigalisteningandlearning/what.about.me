@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What About Me</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+
+/* ─────────────────────────────────────────────
+   RESET & ROOT
+───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --linen:    #f4f0ea;
+  --parchment:#ede8df;
+  --warm-mid: #d9d2c5;
+  --warm-dark:#b8a99a;
+  --clay:     #9c7b6b;
+  --earth:    #6b5345;
+  --ink:      #2e2720;
+  --text:     #3d3028;
+  --muted:    #8a7b70;
+  --faint:    #c4b9ae;
+  --white:    #faf8f5;
+
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body:    'Jost', sans-serif;
+
+  --max: 860px;
+  --wide: 1100px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--white);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 17px;
+  line-height: 1.75;
+  overflow-x: hidden;
+}
+
+/* Linen texture */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noise)' opacity='0.028'/%3E%3C/svg%3E");
+  opacity: 1;
+}
+
+/* ─────────────────────────────────────────────
+   NAVIGATION
+───────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 1.6rem 3rem;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: background 0.4s, border-color 0.4s;
+}
+nav.solid {
+  background: rgba(250, 248, 245, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--warm-mid);
+}
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 1.1rem; font-weight: 400; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink);
+  text-decoration: none;
+}
+.nav-links {
+  display: flex; gap: 2.5rem; list-style: none;
+}
+.nav-links a {
+  font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--ink); }
+.nav-cta {
+  font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--earth); border-bottom: 1px solid var(--clay);
+  text-decoration: none; padding-bottom: 1px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.nav-cta:hover { color: var(--ink); border-color: var(--ink); }
+
+/* ─────────────────────────────────────────────
+   HERO
+───────────────────────────────────────────── */
+.hero {
+  min-height: 100vh;
+  display: grid; grid-template-columns: 1fr 1fr;
+  position: relative; overflow: hidden;
+}
+.hero-left {
+  background: var(--linen);
+  display: flex; flex-direction: column;
+  justify-content: flex-end;
+  padding: 8rem 5rem 6rem;
+  position: relative;
+}
+.hero-left::after {
+  content: '';
+  position: absolute; right: 0; top: 15%; bottom: 15%;
+  width: 1px; background: var(--warm-mid);
+}
+.hero-eyebrow {
+  font-family: var(--font-body);
+  font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--clay); margin-bottom: 2rem;
+  opacity: 0; animation: rise 1s ease 0.3s forwards;
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(3.8rem, 6vw, 6.5rem);
+  font-weight: 300; line-height: 1.0;
+  letter-spacing: -0.01em; color: var(--ink);
+  margin-bottom: 2.5rem;
+  opacity: 0; animation: rise 1s ease 0.5s forwards;
+}
+.hero-title em {
+  display: block; font-style: italic; font-weight: 300;
+  color: var(--clay);
+}
+.hero-tagline {
+  font-family: var(--font-display);
+  font-size: 1.25rem; font-style: italic; font-weight: 300;
+  color: var(--muted); line-height: 1.5; max-width: 360px;
+  margin-bottom: 3rem;
+  opacity: 0; animation: rise 1s ease 0.7s forwards;
+}
+.hero-rule {
+  width: 48px; height: 1px; background: var(--clay);
+  margin-bottom: 1.5rem;
+  opacity: 0; animation: rise 1s ease 0.9s forwards;
+}
+.hero-sub {
+  font-size: 0.8rem; letter-spacing: 0.08em; color: var(--muted);
+  opacity: 0; animation: rise 1s ease 1.1s forwards;
+}
+
+.hero-right {
+  background: var(--parchment);
+  position: relative; overflow: hidden;
+}
+/* Illustrated scene: chair in empty room */
+.hero-scene {
+  position: absolute; inset: 0;
+  display: flex; align-items: flex-end; justify-content: center;
+  padding-bottom: 4rem;
+}
+.scene-svg {
+  width: 100%; height: 100%; position: absolute; inset: 0;
+}
+.hero-quote {
+  position: absolute; top: 3rem; right: 3rem; left: 3rem;
+  font-family: var(--font-display);
+  font-size: 1.05rem; font-style: italic; font-weight: 300;
+  color: var(--muted); line-height: 1.6; text-align: right;
+  opacity: 0; animation: rise 1.2s ease 1.3s forwards;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─────────────────────────────────────────────
+   SHARED SECTION STYLES
+───────────────────────────────────────────── */
+section { position: relative; }
+
+.container {
+  max-width: var(--max);
+  margin: 0 auto; padding: 0 2rem;
+}
+.container-wide {
+  max-width: var(--wide);
+  margin: 0 auto; padding: 0 2rem;
+}
+
+.section-pad { padding: 7rem 2rem; }
+.section-pad-sm { padding: 5rem 2rem; }
+
+.label {
+  font-size: 0.67rem; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--clay); margin-bottom: 1.5rem; display: block;
+}
+.display {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 300; line-height: 1.15; color: var(--ink);
+}
+.display em { font-style: italic; color: var(--clay); }
+.body-text {
+  font-size: 1rem; line-height: 1.85; color: var(--muted);
+  max-width: 58ch;
+}
+.rule {
+  width: 40px; height: 1px;
+  background: var(--warm-dark); margin: 2rem 0;
+}
+
+/* Reveal animations */
+.reveal {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ─────────────────────────────────────────────
+   THE QUESTION SECTION
+───────────────────────────────────────────── */
+.question-section {
+  background: var(--white);
+}
+.question-inner {
+  max-width: 660px; margin: 0 auto;
+  padding: 8rem 2rem;
+  text-align: center;
+}
+.question-inner .label { text-align: center; display: block; }
+.question-inner .display {
+  font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+  margin-bottom: 2.5rem;
+}
+.question-inner .body-text {
+  margin: 0 auto 2rem;
+  font-size: 1.05rem;
+}
+.question-marks {
+  display: flex; flex-wrap: wrap; gap: 0.8rem;
+  justify-content: center; margin-top: 3rem;
+}
+.q-mark {
+  font-family: var(--font-display);
+  font-size: 1rem; font-style: italic;
+  color: var(--clay); border: 1px solid var(--warm-mid);
+  padding: 0.5rem 1.2rem; border-radius: 2px;
+  background: var(--linen);
+}
+
+/* ─────────────────────────────────────────────
+   THE PATTERNS
+───────────────────────────────────────────── */
+.patterns-section {
+  background: var(--linen);
+  border-top: 1px solid var(--warm-mid);
+  border-bottom: 1px solid var(--warm-mid);
+}
+.patterns-header {
+  max-width: var(--max); margin: 0 auto;
+  padding: 6rem 2rem 3rem;
+}
+.patterns-grid {
+  max-width: var(--wide); margin: 0 auto;
+  padding: 0 2rem 7rem;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border: 1px solid var(--warm-mid);
+}
+.pattern-card {
+  padding: 2.8rem 2rem;
+  border-right: 1px solid var(--warm-mid);
+  transition: background 0.3s;
+}
+.pattern-card:last-child { border-right: none; }
+.pattern-card:hover { background: var(--parchment); }
+.pattern-numeral {
+  font-family: var(--font-display);
+  font-size: 3.5rem; font-weight: 300;
+  color: var(--warm-mid); line-height: 1;
+  margin-bottom: 1.5rem; display: block;
+}
+.pattern-name {
+  font-family: var(--font-display);
+  font-size: 1.5rem; font-weight: 400; font-style: italic;
+  color: var(--ink); margin-bottom: 1rem; line-height: 1.2;
+}
+.pattern-desc {
+  font-size: 0.88rem; line-height: 1.8; color: var(--muted);
+}
+.pattern-tag {
+  display: inline-block; margin-top: 1.5rem;
+  font-size: 0.67rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--clay); border-bottom: 1px solid var(--warm-mid);
+  padding-bottom: 2px;
+}
+
+/* ─────────────────────────────────────────────
+   THE WORK (COURSE)
+───────────────────────────────────────────── */
+.work-section { background: var(--white); }
+.work-inner {
+  max-width: var(--wide); margin: 0 auto;
+  padding: 7rem 2rem;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 6rem; align-items: start;
+}
+.work-left { position: sticky; top: 5rem; }
+.course-modules {
+  display: flex; flex-direction: column; gap: 0;
+  border: 1px solid var(--warm-mid);
+}
+.module {
+  padding: 1.8rem 2rem;
+  border-bottom: 1px solid var(--warm-mid);
+  transition: background 0.2s;
+  cursor: default;
+}
+.module:last-child { border-bottom: none; }
+.module:hover { background: var(--linen); }
+.module-num {
+  font-size: 0.67rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--clay); margin-bottom: 0.4rem; display: block;
+}
+.module-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem; font-weight: 400; color: var(--ink);
+  margin-bottom: 0.4rem;
+}
+.module-desc {
+  font-size: 0.84rem; color: var(--muted); line-height: 1.65;
+}
+.work-cta-block {
+  margin-top: 2.5rem; padding: 2rem; background: var(--linen);
+  border: 1px solid var(--warm-mid);
+}
+.work-cta-block p {
+  font-size: 0.88rem; color: var(--muted); line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+.btn-primary {
+  display: inline-block;
+  font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--white); background: var(--earth);
+  padding: 0.9rem 2rem; text-decoration: none;
+  transition: background 0.2s;
+}
+.btn-primary:hover { background: var(--ink); }
+.btn-ghost {
+  display: inline-block;
+  font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--earth); border: 1px solid var(--warm-dark);
+  padding: 0.9rem 2rem; text-decoration: none;
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-ghost:hover { border-color: var(--earth); color: var(--ink); }
+
+/* ─────────────────────────────────────────────
+   WHO IT'S FOR
+───────────────────────────────────────────── */
+.for-section {
+  background: var(--parchment);
+  border-top: 1px solid var(--warm-mid);
+  border-bottom: 1px solid var(--warm-mid);
+}
+.for-inner {
+  max-width: var(--max); margin: 0 auto;
+  padding: 7rem 2rem;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+}
+.for-statements {
+  display: flex; flex-direction: column; gap: 1.5rem;
+  padding-top: 0.5rem;
+}
+.for-statement {
+  display: flex; gap: 1.2rem; align-items: flex-start;
+  padding: 1.5rem; background: var(--white);
+  border: 1px solid var(--warm-mid);
+  transition: border-color 0.2s;
+}
+.for-statement:hover { border-color: var(--clay); }
+.for-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--clay); flex-shrink: 0; margin-top: 0.6rem;
+}
+.for-text {
+  font-size: 0.92rem; line-height: 1.7; color: var(--text);
+}
+.for-note {
+  margin-top: 2rem; padding: 1.5rem;
+  border-left: 2px solid var(--clay);
+  font-family: var(--font-display);
+  font-size: 1rem; font-style: italic;
+  color: var(--muted); line-height: 1.6;
+  background: rgba(255,255,255,0.5);
+}
+
+/* ─────────────────────────────────────────────
+   RESOURCES
+───────────────────────────────────────────── */
+.resources-section { background: var(--white); }
+.resources-inner {
+  max-width: var(--wide); margin: 0 auto;
+  padding: 7rem 2rem;
+}
+.resources-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem; margin-top: 3.5rem;
+}
+.resource-card {
+  padding: 2.5rem 2rem;
+  border: 1px solid var(--warm-mid);
+  background: var(--linen);
+  transition: transform 0.3s, border-color 0.3s;
+}
+.resource-card:hover { transform: translateY(-4px); border-color: var(--clay); }
+.resource-type {
+  font-size: 0.67rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--clay); margin-bottom: 1.2rem; display: block;
+}
+.resource-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem; font-weight: 400; color: var(--ink);
+  line-height: 1.3; margin-bottom: 1rem;
+}
+.resource-desc {
+  font-size: 0.86rem; color: var(--muted); line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+.resource-link {
+  font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--earth); text-decoration: none;
+  border-bottom: 1px solid var(--warm-mid); padding-bottom: 1px;
+  transition: border-color 0.2s;
+}
+.resource-link:hover { border-color: var(--earth); }
+
+/* ─────────────────────────────────────────────
+   INVITATION
+───────────────────────────────────────────── */
+.invitation-section {
+  background: var(--ink);
+  position: relative; overflow: hidden;
+}
+.invitation-section::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 80% at 80% 50%, rgba(156,123,107,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 70% at 20% 50%, rgba(107,83,69,0.1) 0%, transparent 60%);
+}
+.invitation-inner {
+  max-width: 620px; margin: 0 auto;
+  padding: 9rem 2rem;
+  text-align: center;
+  position: relative; z-index: 1;
+}
+.invitation-inner .label { color: var(--clay); }
+.invitation-inner .display {
+  color: var(--linen);
+  font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+  margin-bottom: 2rem;
+}
+.invitation-inner .body-text {
+  color: var(--warm-dark); margin: 0 auto 3rem;
+  font-size: 1.02rem;
+}
+.invitation-actions {
+  display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+}
+.btn-light {
+  display: inline-block;
+  font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--ink); background: var(--linen);
+  padding: 0.9rem 2.2rem; text-decoration: none;
+  transition: background 0.2s;
+}
+.btn-light:hover { background: var(--white); }
+.btn-outline-light {
+  display: inline-block;
+  font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--linen); border: 1px solid rgba(244,240,234,0.3);
+  padding: 0.9rem 2.2rem; text-decoration: none;
+  transition: border-color 0.2s;
+}
+.btn-outline-light:hover { border-color: var(--linen); }
+.invitation-note {
+  margin-top: 3rem; font-size: 0.8rem; color: var(--muted);
+  letter-spacing: 0.05em;
+}
+
+/* ─────────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────────── */
+footer {
+  background: var(--ink); border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 3rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.footer-logo {
+  font-family: var(--font-display);
+  font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--warm-dark); text-decoration: none;
+}
+.footer-tagline {
+  font-size: 0.75rem; color: var(--muted);
+  font-style: italic; font-family: var(--font-display);
+}
+.footer-links {
+  display: flex; gap: 2rem; list-style: none;
+}
+.footer-links a {
+  font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none;
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--warm-dark); }
+
+/* ─────────────────────────────────────────────
+   DIVIDER
+───────────────────────────────────────────── */
+.divider {
+  width: 40px; height: 1px;
+  background: var(--warm-mid); margin: 2rem 0;
+}
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────── */
+@media (max-width: 960px) {
+  nav { padding: 1.2rem 1.5rem; }
+  .nav-links { display: none; }
+  .hero { grid-template-columns: 1fr; }
+  .hero-left { padding: 7rem 2rem 4rem; min-height: 80vh; }
+  .hero-left::after { display: none; }
+  .hero-right { min-height: 50vh; }
+  .patterns-grid { grid-template-columns: 1fr 1fr; }
+  .pattern-card:nth-child(2) { border-right: none; }
+  .pattern-card:nth-child(3) { border-right: 1px solid var(--warm-mid); border-top: 1px solid var(--warm-mid); }
+  .pattern-card:nth-child(4) { border-right: none; border-top: 1px solid var(--warm-mid); }
+  .work-inner { grid-template-columns: 1fr; gap: 3rem; }
+  .work-left { position: static; }
+  .for-inner { grid-template-columns: 1fr; gap: 3rem; }
+  .resources-grid { grid-template-columns: 1fr; }
+  footer { flex-direction: column; gap: 1.5rem; text-align: center; padding: 2rem; }
+  .footer-links { flex-wrap: wrap; justify-content: center; }
+}
+@media (max-width: 600px) {
+  .patterns-grid { grid-template-columns: 1fr; }
+  .pattern-card { border-right: none; border-top: 1px solid var(--warm-mid); }
+  .pattern-card:first-child { border-top: none; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ── NAVIGATION ─────────────────────────────── -->
+<nav id="nav">
+  <a href="#" class="nav-logo">What About Me</a>
+  <ul class="nav-links">
+    <li><a href="#patterns">The Patterns</a></li>
+    <li><a href="#course">The Work</a></li>
+    <li><a href="#resources">Resources</a></li>
+  </ul>
+  <a href="#course" class="nav-cta">Begin →</a>
+</nav>
+
+<!-- ── HERO ───────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">A therapeutic reflection space</p>
+    <h1 class="hero-title">
+      What<br>About<br><em>Me.</em>
+    </h1>
+    <p class="hero-tagline">When love asks you to disappear.</p>
+    <div class="hero-rule"></div>
+    <p class="hero-sub">Psychoeducation · Reflection · Grief · Boundaries</p>
+  </div>
+  <div class="hero-right">
+    <!-- Illustrated scene: a single chair in warm light -->
+    <svg class="scene-svg" viewBox="0 0 600 700" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax meet">
+      <!-- Room background tone -->
+      <rect width="600" height="700" fill="#ede8df"/>
+      <!-- Warm light from upper left -->
+      <defs>
+        <radialGradient id="roomLight" cx="25%" cy="20%" r="70%">
+          <stop offset="0%" stop-color="#f4f0ea" stop-opacity="0.9"/>
+          <stop offset="100%" stop-color="#d9d2c5" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="floorLight" cx="40%" cy="85%" r="50%">
+          <stop offset="0%" stop-color="#f4f0ea" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="transparent" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <rect width="600" height="700" fill="url(#roomLight)"/>
+      <!-- Floor -->
+      <rect x="0" y="500" width="600" height="200" fill="#cdc5b8" opacity="0.35"/>
+      <rect width="600" height="700" fill="url(#floorLight)"/>
+      <!-- Wall / floor line -->
+      <line x1="0" y1="500" x2="600" y2="500" stroke="#b8a99a" stroke-width="0.6"/>
+      <!-- Shadow under chair -->
+      <ellipse cx="280" cy="516" rx="85" ry="12" fill="#a89585" opacity="0.18"/>
+      <!-- Chair legs -->
+      <line x1="220" y1="440" x2="215" y2="515" stroke="#7a6355" stroke-width="3" stroke-linecap="round"/>
+      <line x1="340" y1="440" x2="345" y2="515" stroke="#7a6355" stroke-width="3" stroke-linecap="round"/>
+      <line x1="220" y1="420" x2="214" y2="515" stroke="#7a6355" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="340" y1="420" x2="346" y2="515" stroke="#7a6355" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- Chair seat -->
+      <rect x="205" y="430" width="150" height="16" rx="3" fill="#8a7060"/>
+      <!-- Seat cushion -->
+      <rect x="208" y="424" width="144" height="14" rx="3" fill="#9c8070"/>
+      <!-- Chair back vertical supports -->
+      <line x1="220" y1="295" x2="220" y2="430" stroke="#7a6355" stroke-width="3" stroke-linecap="round"/>
+      <line x1="340" y1="295" x2="340" y2="430" stroke="#7a6355" stroke-width="3" stroke-linecap="round"/>
+      <!-- Chair back horizontals -->
+      <line x1="218" y1="300" x2="342" y2="300" stroke="#7a6355" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="218" y1="335" x2="342" y2="335" stroke="#7a6355" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+      <line x1="218" y1="368" x2="342" y2="368" stroke="#7a6355" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+      <!-- Chair back top rail -->
+      <rect x="210" y="287" width="140" height="14" rx="4" fill="#8a7060"/>
+      <!-- Window light — soft rectangle on wall -->
+      <rect x="80" y="100" width="140" height="200" fill="#f4f0ea" opacity="0.5" rx="2"/>
+      <rect x="85" y="105" width="130" height="190" fill="#f4f0ea" opacity="0.3" rx="1"/>
+      <!-- Window pane dividers -->
+      <line x1="150" y1="105" x2="150" y2="295" stroke="#c4b9ae" stroke-width="0.8"/>
+      <line x1="85" y1="200" x2="215" y2="200" stroke="#c4b9ae" stroke-width="0.8"/>
+      <!-- Light strip on floor from window -->
+      <polygon points="80,500 220,500 260,700 0,700" fill="#f4f0ea" opacity="0.12"/>
+      <!-- Small side table -->
+      <rect x="360" y="430" width="65" height="5" rx="2" fill="#9c8070"/>
+      <line x1="370" y1="435" x2="368" y2="515" stroke="#7a6355" stroke-width="2" stroke-linecap="round"/>
+      <line x1="415" y1="435" x2="417" y2="515" stroke="#7a6355" stroke-width="2" stroke-linecap="round"/>
+      <!-- Teacup on table -->
+      <!-- saucer -->
+      <ellipse cx="392" cy="426" rx="20" ry="4" fill="#c4b9ae"/>
+      <!-- cup body -->
+      <path d="M375 418 Q375 430 392 430 Q409 430 409 418 Z" fill="#d9d2c5"/>
+      <path d="M375 410 Q375 426 392 426 Q409 426 409 410 L405 408 Q392 412 379 408 Z" fill="#e0dbd4"/>
+      <!-- cup rim -->
+      <ellipse cx="392" cy="408" rx="17" ry="4" fill="#ede8df"/>
+      <!-- handle -->
+      <path d="M409 412 Q420 412 420 420 Q420 428 409 425" stroke="#b8a99a" fill="none" stroke-width="1.8"/>
+      <!-- Steam lines (animated) -->
+      <path d="M385 404 Q383 396 385 388 Q387 380 385 372" stroke="#b8a99a" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.5">
+        <animate attributeName="d" values="M385 404 Q383 396 385 388 Q387 380 385 372;M385 404 Q387 396 385 388 Q383 380 385 372;M385 404 Q383 396 385 388 Q387 380 385 372" dur="3s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.5;0.2;0.5" dur="3s" repeatCount="indefinite"/>
+      </path>
+      <path d="M393 402 Q391 393 393 384 Q395 376 393 368" stroke="#b8a99a" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.4">
+        <animate attributeName="d" values="M393 402 Q395 393 393 384 Q391 376 393 368;M393 402 Q391 393 393 384 Q395 376 393 368;M393 402 Q395 393 393 384 Q391 376 393 368" dur="4s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.4;0.15;0.4" dur="4s" repeatCount="indefinite"/>
+      </path>
+    </svg>
+    <blockquote class="hero-quote">
+      "You are not asking for too much.<br>You are asking the wrong person<br>to see you."
+    </blockquote>
+  </div>
+</section>
+
+<!-- ── THE QUESTION ────────────────────────────── -->
+<section class="question-section">
+  <div class="question-inner">
+    <span class="label reveal">The question at the center</span>
+    <h2 class="display reveal reveal-delay-1">
+      Where do <em>I</em> exist<br>in this relationship?
+    </h2>
+    <div class="rule" style="margin:0 auto 2rem;" class="reveal"></div>
+    <p class="body-text reveal reveal-delay-2">
+      This platform exists for the people who have been quietly learning to want less. Who have watched their needs get rerouted, postponed, explained away. Who have been told — or come to believe — that their pain is jealousy, their grief is immaturity, their limits are a problem to be solved.
+    </p>
+    <p class="body-text reveal reveal-delay-3" style="margin-top:1.2rem;">
+      This is not about anyone else. It is about you. What you're carrying. What it's cost you. And what it might mean to return to yourself.
+    </p>
+    <div class="question-marks reveal reveal-delay-4">
+      <span class="q-mark">"You're not crazy."</span>
+      <span class="q-mark">"This isn't just jealousy."</span>
+      <span class="q-mark">"This is grief."</span>
+      <span class="q-mark">"This is attachment."</span>
+      <span class="q-mark">"This is about you too."</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── THE PATTERNS ────────────────────────────── -->
+<section class="patterns-section" id="patterns">
+  <div class="patterns-header">
+    <span class="label reveal">The Campaign · Archetypes</span>
+    <h2 class="display reveal reveal-delay-1">
+      The ways we learn<br>to make ourselves <em>smaller.</em>
+    </h2>
+    <div class="divider reveal reveal-delay-2"></div>
+    <p class="body-text reveal reveal-delay-3">
+      These are not personality types. They are survival strategies — the shapes we take when love keeps asking us to adjust. Recognising yours is not a diagnosis. It is a beginning.
+    </p>
+  </div>
+  <div class="container-wide">
+    <div class="patterns-grid">
+      <div class="pattern-card reveal">
+        <span class="pattern-numeral">I</span>
+        <h3 class="pattern-name">The Patient One</h3>
+        <p class="pattern-desc">You've learned that love is something to wait for. That your turn will come if you're just steady enough, quiet enough, understanding enough. Patience became a permanent posture — not a choice.</p>
+        <span class="pattern-tag">Waiting · Deferred hope</span>
+      </div>
+      <div class="pattern-card reveal reveal-delay-1">
+        <span class="pattern-numeral">II</span>
+        <h3 class="pattern-name">The Quiet One</h3>
+        <p class="pattern-desc">You stopped saying certain things. Not because they weren't true — but because saying them created problems. Silence felt safer than the response. Over time, you stopped knowing what you needed at all.</p>
+        <span class="pattern-tag">Silence · Self-erasure</span>
+      </div>
+      <div class="pattern-card reveal reveal-delay-2">
+        <span class="pattern-numeral">III</span>
+        <h3 class="pattern-name">The Flexible One</h3>
+        <p class="pattern-desc">You became someone who could adapt. Who didn't make demands. Your limits softened and moved until you weren't sure where they'd been to begin with. Flexibility as survival.</p>
+        <span class="pattern-tag">Boundaries · Adaptation</span>
+      </div>
+      <div class="pattern-card reveal reveal-delay-3">
+        <span class="pattern-numeral">IV</span>
+        <h3 class="pattern-name">The Fixer</h3>
+        <p class="pattern-desc">If you could just solve the right problem, understand the right dynamic, have the right conversation — things would settle. You've been working hard on a relationship that isn't working on you.</p>
+        <span class="pattern-tag">Control · Anxious repair</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── THE WORK ────────────────────────────────── -->
+<section class="work-section" id="course">
+  <div class="work-inner">
+    <div class="work-left">
+      <span class="label reveal">The Course</span>
+      <h2 class="display reveal reveal-delay-1">
+        A structured<br>path back to <em>yourself.</em>
+      </h2>
+      <div class="divider reveal reveal-delay-2"></div>
+      <p class="body-text reveal reveal-delay-3">
+        This is an anonymous, asynchronous online course — therapeutic in tone, educational in approach. It is not crisis care. It is the kind of slow, structured reckoning that most conversations never make space for.
+      </p>
+      <p class="body-text reveal reveal-delay-4" style="margin-top:1rem;">
+        You can move through it at your own pace, in your own privacy, without naming anyone else.
+      </p>
+      <div class="work-cta-block reveal">
+        <p>Hosted on Thinkific. No prior experience required. Take it alone. Take it quietly.</p>
+        <a href="#" class="btn-primary">Enroll in the Course</a>
+        &nbsp;&nbsp;
+        <a href="#" class="btn-ghost" style="margin-top:0.5rem">Learn More</a>
+      </div>
+    </div>
+    <div>
+      <div class="course-modules">
+        <div class="module reveal">
+          <span class="module-num">Module 01</span>
+          <h3 class="module-title">Naming What Happened</h3>
+          <p class="module-desc">Betrayal trauma, relational displacement, and why your body knows before your mind does. Building language for experiences that don't have easy names.</p>
+        </div>
+        <div class="module reveal reveal-delay-1">
+          <span class="module-num">Module 02</span>
+          <h3 class="module-title">Attachment & Why It Hurts Like This</h3>
+          <p class="module-desc">Understanding your attachment style in the context of relational insecurity. Why the pain is not irrational, and what it's actually signaling.</p>
+        </div>
+        <div class="module reveal reveal-delay-2">
+          <span class="module-num">Module 03</span>
+          <h3 class="module-title">Grief That Has No Name</h3>
+          <p class="module-desc">Complicated grief. Anticipatory loss. The mourning of what you hoped for. How to hold grief that the people around you may not validate.</p>
+        </div>
+        <div class="module reveal reveal-delay-3">
+          <span class="module-num">Module 04</span>
+          <h3 class="module-title">Where Your Limits Actually Are</h3>
+          <p class="module-desc">Boundary confusion, self-abandonment, and the difference between compromise and erosion. Rebuilding your sense of what is and isn't okay.</p>
+        </div>
+        <div class="module reveal reveal-delay-4">
+          <span class="module-num">Module 05</span>
+          <h3 class="module-title">Chronic Comparison & Self-Worth</h3>
+          <p class="module-desc">The particular devastation of being compared — or comparing yourself. What it does to identity and how to separate your worth from the dynamic.</p>
+        </div>
+        <div class="module reveal">
+          <span class="module-num">Module 06</span>
+          <h3 class="module-title">The Return</h3>
+          <p class="module-desc">Gentle accountability. What now looks like. Not a resolution, but an orientation — toward yourself, your needs, your future.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── WHO IT'S FOR ────────────────────────────── -->
+<section class="for-section">
+  <div class="for-inner">
+    <div>
+      <span class="label reveal">Who this is for</span>
+      <h2 class="display reveal reveal-delay-1">
+        If you've ever asked<br><em>"Am I too much?"</em><br>this is for you.
+      </h2>
+      <div class="divider reveal reveal-delay-2"></div>
+      <p class="body-text reveal reveal-delay-3">
+        This platform is for anyone who has found themselves emotionally sidelined in a relationship — regardless of gender, orientation, or the structure of that relationship.
+      </p>
+      <div class="for-note reveal reveal-delay-4">
+        "This is not a platform about what other people are doing. It is entirely about what is happening to you."
+      </div>
+    </div>
+    <div class="for-statements">
+      <div class="for-statement reveal">
+        <div class="for-dot"></div>
+        <p class="for-text">You are in or have been in a relationship where your partner has other partners — formally or informally.</p>
+      </div>
+      <div class="for-statement reveal reveal-delay-1">
+        <div class="for-dot"></div>
+        <p class="for-text">You have felt invisible, deprioritised, or like your feelings were always the problem to be managed.</p>
+      </div>
+      <div class="for-statement reveal reveal-delay-2">
+        <div class="for-dot"></div>
+        <p class="for-text">You've been told your pain is jealousy, insecurity, or something you need to work on — while your actual needs went unacknowledged.</p>
+      </div>
+      <div class="for-statement reveal reveal-delay-3">
+        <div class="for-dot"></div>
+        <p class="for-text">You are trying to understand what happened to your sense of self — and where to go from here.</p>
+      </div>
+      <div class="for-statement reveal reveal-delay-4">
+        <div class="for-dot"></div>
+        <p class="for-text">You want to process this quietly, anonymously, without having to explain yourself to anyone.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── RESOURCES ───────────────────────────────── -->
+<section class="resources-section" id="resources">
+  <div class="resources-inner">
+    <span class="label reveal">Resources & Community</span>
+    <h2 class="display reveal reveal-delay-1">
+      Tools for the<br>in-between moments.
+    </h2>
+    <div class="resources-grid">
+      <div class="resource-card reveal">
+        <span class="resource-type">Instagram</span>
+        <h3 class="resource-title">The Campaign Feed</h3>
+        <p class="resource-desc">Psychoeducational posts, archetype breakdowns, language-building tools, and short reflections. Content you can save for when you need it.</p>
+        <a href="#" class="resource-link">Follow @whataboutme →</a>
+      </div>
+      <div class="resource-card reveal reveal-delay-1">
+        <span class="resource-type">Downloads · Free</span>
+        <h3 class="resource-title">Reflection Worksheets</h3>
+        <p class="resource-desc">Structured prompts designed for quiet, private processing. Print them, write in them, keep them. No sign-up required.</p>
+        <a href="#" class="resource-link">Download Worksheets →</a>
+      </div>
+      <div class="resource-card reveal reveal-delay-2">
+        <span class="resource-type">Language Tools</span>
+        <h3 class="resource-title">Words for What Happened</h3>
+        <p class="resource-desc">A growing glossary of relational and psychological terms — because sometimes having the right word is the first step toward understanding an experience.</p>
+        <a href="#" class="resource-link">Explore the Glossary →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── INVITATION ──────────────────────────────── -->
+<section class="invitation-section" id="begin">
+  <div class="invitation-inner">
+    <span class="label reveal">You're in the right place</span>
+    <h2 class="display reveal reveal-delay-1">
+      Your needs were<br>always <em>real.</em>
+    </h2>
+    <p class="body-text reveal reveal-delay-2">
+      You don't have to understand everything yet. You don't have to have made any decisions. You just have to be willing to ask the question — and follow it somewhere honest.
+    </p>
+    <div class="invitation-actions reveal reveal-delay-3">
+      <a href="#course" class="btn-light">Begin the Course</a>
+      <a href="#resources" class="btn-outline-light">Explore Resources</a>
+    </div>
+    <p class="invitation-note reveal reveal-delay-4">
+      Anonymous · Self-paced · No prior experience required
+    </p>
+  </div>
+</section>
+
+<!-- ── FOOTER ──────────────────────────────────── -->
+<footer>
+  <a href="#" class="footer-logo">What About Me</a>
+  <p class="footer-tagline">When love asks you to disappear.</p>
+  <ul class="footer-links">
+    <li><a href="#patterns">The Patterns</a></li>
+    <li><a href="#course">The Course</a></li>
+    <li><a href="#resources">Resources</a></li>
+    <li><a href="#">Instagram</a></li>
+  </ul>
+</footer>
+
+<script>
+  // Nav scroll
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('solid', window.scrollY > 60);
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => io.observe(el));
+</script>
+</body>
+</html>
